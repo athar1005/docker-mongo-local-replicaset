@@ -1,4 +1,4 @@
-FROM mongo:latest
+FROM mongo:4.4.1-bionic
 
 VOLUME /data
 EXPOSE 27001 27002 27003

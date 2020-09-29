@@ -17,19 +17,17 @@ function waitForMongo {
     done
 }
 
-if [ ! "$(ls -A /data/db1)" ]; then
-    mkdir /data/db1
-    mkdir /data/db2
-    mkdir /data/db3
-fi
+mkdir -p /data/db1
+mkdir -p /data/db2
+mkdir -p /data/db3
 
 echo "STARTING CLUSTER"
 
-mongod --port 27003 --smallfiles --dbpath /data/db3 --replSet $REPLICA_SET_NAME --bind_ip=::,0.0.0.0 &
+mongod --port 27003 --dbpath /data/db3 --replSet $REPLICA_SET_NAME --bind_ip=::,0.0.0.0 &
 DB3_PID=$!
-mongod --port 27002 --smallfiles --dbpath /data/db2 --replSet $REPLICA_SET_NAME --bind_ip=::,0.0.0.0 &
+mongod --port 27002 --dbpath /data/db2 --replSet $REPLICA_SET_NAME --bind_ip=::,0.0.0.0 &
 DB2_PID=$!
-mongod --port 27001 --smallfiles --dbpath /data/db1 --replSet $REPLICA_SET_NAME --bind_ip=::,0.0.0.0 &
+mongod --port 27001 --dbpath /data/db1 --replSet $REPLICA_SET_NAME --bind_ip=::,0.0.0.0 &
 DB1_PID=$!
 
 waitForMongo 27001
@@ -37,7 +35,7 @@ waitForMongo 27002
 waitForMongo 27003
 
 echo "CONFIGURING REPLICA SET"
-CONFIG="{ _id: '$REPLICA_SET_NAME', members: [{_id: 0, host: 'localhost:27001', priority: 2 }, { _id: 1, host: 'localhost:27002' }, { _id: 2, host: 'localhost:27003' } ]}"
+CONFIG="{ _id: '$REPLICA_SET_NAME', members: [{_id: 0, host: 'localhost:27001' }, { _id: 1, host: 'localhost:27002' }, { _id: 2, host: 'localhost:27003' } ]}"
 mongo admin --port 27001 --eval "db.runCommand({ replSetInitiate: $CONFIG })"
 
 waitForMongo 27002

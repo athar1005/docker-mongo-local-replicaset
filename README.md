@@ -4,11 +4,9 @@ Sometimes you need a replica set in your local environment (perhaps you want to 
 
 **THIS IS ONLY USEFUL FOR LOCAL DEVELOPMENT**
 
-## Using
+## Usage
 
 Based on mongo:4.4.1-bionic. Supports multi document transactions via mongo sessions.
-
-## Usage:
 
 ### 1. Pull image
 `docker pull athar1005/docker-mongo-local-replicaset`
